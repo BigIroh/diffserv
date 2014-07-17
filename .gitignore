@@ -1,0 +1,3 @@
+node_modules/*
+build/*
+javascripts/all.js
