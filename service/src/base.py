@@ -1,27 +1,34 @@
-#!/bin/python
+#!/usr/bin/python
 from subprocess import check_output
 import sys
 import json
+import os.path
 
 def getResponse(git_base, path, callback=None, version=None, target=None):
     resp = {}
     resp['name'] = path
 
     if target == None:
-        response['version'] = getNewestVersion(path)
+        resp['version'] = getNewestVersion(git_base, path)
     else:
-        response['version'] = target
+        resp['version'] = target
 
     if version == None:
-        resp['content']
+        with open (os.path.join(git_base,path), "r") as myfile:
+            resp['content'] = myfile.read()
     else:
-        resp['delta'] = generateDiff(version, resp['version'])
+        resp['delta'] = generateDiff(git_base, version, resp['version'])
 
-def getNewestVersion(path_to_blob):
-    return check_output(["git","-C",base_path,"hash-object",path_to_blob])
+    if callback == None:
+        return json.dumps(resp)
+    else:
+        return "%s(%s);" % (callback, json.dumps(resp))
 
-def generateDiff(old, new):
-    raw = check_output(["git","-C",base_path,"diff","-U0","--minimal",old,new])
+def getNewestVersion(git_base, path_to_blob):
+    return check_output(["git","-C",git_base,"hash-object",path_to_blob]).decode("utf-8").replace("\n","")
+
+def generateDiff(git_base, old, new):
+    raw = check_output(["git","-C",git_base,"diff","-U0","--minimal",old,new])
     raw = raw.decode("utf-8")
     raw = raw.split("\n")
     ret = []
@@ -30,7 +37,7 @@ def generateDiff(old, new):
             ret.append(hunkNumbers(line))
         elif line.startswith("+"):
             ret.append(line[1:])
-    return ret
+    return "\n".join(ret)
 
 # git diff's line numbers are weird and shitty
 # we're getting '@@ -1,0 +1,0 @@'
@@ -65,5 +72,7 @@ def main(argv):
         print("Usage: base.py git_base path [callback [my_version [target_version]]]")
         return
     else:
-        getResponse(*argv[1:])
+        print(getResponse(*argv[1:]))
 
+if(__name__ == "__main__"):
+    main(sys.argv)
