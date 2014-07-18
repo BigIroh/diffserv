@@ -27,3 +27,5 @@ messenger.on('ds-request', function (filename) {
 		});
 	}
 });
+
+messenger.post('ds-iframe-ready', {});

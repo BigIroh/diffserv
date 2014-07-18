@@ -7,7 +7,7 @@ var JSONP = {},
  * @param {function} callback
  */
 JSONP.get = function (url, query, callback) {
-	var head = document.documentElement[0],
+	var head = document.documentElement.childNodes[0],
 		querystring = [],
 		key,
 		val,

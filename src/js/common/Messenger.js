@@ -1,8 +1,11 @@
+var EventEmitter = require('./EventEmitter'),
+	Messenger;
+
 /**
  * target {window} - window to communicate with
  * domain {string}
  */
-var Messenger = function (target, domain) {
+Messenger = function (target, domain) {
 	var ctx = this;
 
 	this.target = target;
@@ -26,6 +29,8 @@ var Messenger = function (target, domain) {
 	}
 };
 
+Messenger.prototype = new EventEmitter();
+
 Messenger.prototype.post = function(type, content) {
 	var message = {
 		type: type,
@@ -41,43 +46,7 @@ Messenger.prototype.post = function(type, content) {
 	}
 };
 
-/**
- * Add a handler for a message type 
- *
- * @param {string} type - message type
- * @param {function} fn - handler to add
- */
-Messenger.prototype.on = function(type, fn) {
-	if(!this.listeners[type]) {
-		this.listeners[type] = [fn];
-	}
-	else {
-		this.listeners[type].push(fn);
-	}
-};
 
-/**
- * Remove a handler for a message type 
- *
- * @param {string} type - message type
- * @param {function} fn - handler to remove
- */
-Messenger.prototype.off = function(type, fn) {
-	var index;
 
-	if(this.listeners.type[type]) {
-		index = this.listeners[type].indexOf(fn);
-		if(index > -1) {
-			this.listeners[type].splice(index, 1);
-			return true;
-		}
-		else {
-			return false;
-		}
-	}
-	else {
-		return false;
-	}
-};
 
 module.exports = Messenger;
