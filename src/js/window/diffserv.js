@@ -3,12 +3,13 @@ var Messenger = require('../common/Messenger'),
 	run = require('./run'),
 	DiffServ;
 
-DiffServ = function () {
+DiffServ = function (options) {
+	options = options || {};
 	this.requestedFiles = [];
 	this.responses = {};
 	this.ready = false;
 	this.iframe = document.createElement('iframe');
-	this.iframe.src = '../html/iframe.html';
+	this.iframe.src = options.iframeUrl || '../html/iframe.html';
 	this.iframe.style.display = 'none';
 	this.iframe.style.width = '1px';
 	this.iframe.style.height = '1px';
@@ -30,7 +31,7 @@ DiffServ = function () {
 			}
 			else {
 				this.responses[data.name] = data;
-				nextFile = this.responses[this.requestedFiles[0].name];
+				nextFile = this.responses[this.requestedFiles[0]];
 				while(this.requestedFiles.length && nextFile) {
 					run(nextFile);
 					this.requestedFiles.splice(0,1);

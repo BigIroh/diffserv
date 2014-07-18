@@ -9,17 +9,20 @@ var EventEmitter = function () {
  * @param {function} fn - handler to add
  */
 EventEmitter.prototype.on = function (type, fn, ctx) {
-	if(ctx) {
-		fn = function () {
-			fn.apply(ctx, Array.prototype.slice.call(arguments, 0));
-		};
-	}
+	var wrapped;
+
+	ctx = ctx || this;	
+	wrapped = function () {
+		fn.apply(ctx, Array.prototype.slice.call(arguments, 0));
+	};
+
+	fn.wrapped = wrapped;
 
 	if(!this.listeners[type]) {
-		this.listeners[type] = [fn];
+		this.listeners[type] = [wrapped];
 	}
 	else {
-		this.listeners[type].push(fn);
+		this.listeners[type].push(wrapped);
 	}
 };
 
@@ -40,6 +43,8 @@ EventEmitter.prototype.once = function (type, fn, ctx) {
 		fn.apply(ctx, Array.prototype.slice(arguments, 0));
 	};
 
+	fn.wrapped = wrapped;
+
 	if(!this.listeners[type]) {
 		this.listeners[type] = [wrapped];
 	}
@@ -59,8 +64,13 @@ EventEmitter.prototype.off = function (type, fn) {
 
 	if(this.listeners[type]) {
 		index = this.listeners[type].indexOf(fn);
+		index2 = this.listeners[type].indexOf(fn.wrapped);
 		if(index > -1) {
 			this.listeners[type].splice(index, 1);
+			return true;
+		}
+		else if(index2 > -1) {
+			this.listeners[type].splice(index2, 1);
 			return true;
 		}
 		else {

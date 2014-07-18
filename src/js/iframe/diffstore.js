@@ -45,7 +45,7 @@ DiffStore.prototype.setNextVersions = function (next) {
 DiffStore.prototype.get = function (filename, callback) {
 	var cached = this.retrieveCachedCopy(filename),
 		next = this.next[filename],
-		query = {},
+		query = {diff: 1},
 		ctx = this;
 	
 	if(cached) {
@@ -64,13 +64,14 @@ DiffStore.prototype.get = function (filename, callback) {
 		}
 		
 		JSONP.get(this.root + filename, query, function (data) {
-			ctx.saveCachedCopy(data.name, data.version, data.content);
+			var content = patch(cached.content, data.delta);
+			ctx.saveCachedCopy(filename, data.version, content);
 			callback(ctx.retrieveCachedCopy(filename));
 		});
 	}
 	else {
 		JSONP.get(this.root + filename, query, function (data) {
-			ctx.saveCachedCopy(data.name, data.version, data.content);
+			ctx.saveCachedCopy(filename, data.version, data.content);
 			callback(ctx.retrieveCachedCopy(filename));
 		});
 	}

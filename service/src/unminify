@@ -1,0 +1,7 @@
+#!/usr/bin/env node
+var fs = require('fs');
+var args = process.argv.slice(2);
+
+var str = fs.readFileSync(args[0], {encoding: 'utf8'}).toString();
+var lol = str.split(';').join(';\n');
+console.log(lol);

@@ -14,10 +14,10 @@ var run = function (file) {
 
 	if(file.content) {
 		if(extension === 'js') {
-			textNode = document.createElement(file.content + '\n//# sourceURL=' + this.root + file.name);
+			textNode = document.createTextNode(file.content + '\n//# sourceURL=' + this.root + file.name);
 		}
 		else {
-			textNode = document.createElement(file.content);
+			textNode = document.createTextNode(file.content);
 		}
 	}
 	
