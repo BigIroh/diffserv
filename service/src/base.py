@@ -4,7 +4,6 @@ import sys
 import json
 
 def getResponse(git_base, path, callback=None, version=None, target=None):
-    base_git_command = ["git","-C",base_path]
     resp = {}
     resp['name'] = path
 
@@ -19,10 +18,10 @@ def getResponse(git_base, path, callback=None, version=None, target=None):
         resp['delta'] = generateDiff(version, resp['version'])
 
 def getNewestVersion(path_to_blob):
-    return check_output(base_git_command + ["hash-object",path_to_blob])
+    return check_output(["git","-C",base_path,"hash-object",path_to_blob])
 
 def generateDiff(old, new):
-    raw = check_output(base_git_command + ["diff","-U0","--minimal",old,new])
+    raw = check_output(["git","-C",base_path,"diff","-U0","--minimal",old,new])
     raw = raw.decode("utf-8")
     raw = raw.split("\n")
     ret = []
