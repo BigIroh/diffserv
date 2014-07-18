@@ -56,9 +56,6 @@ def hunkNumbers(line):
     new_lines[0] = new_lines[0][1:]
     new_lines[0] = int(new_lines[0]) - 1
 
-    if (new_lines[0] > old_lines[0]):
-        old_lines[0] += 1
-
     if len(old_lines) > 1:
         old_lines[1] = int(old_lines[1])
         old_lines[1] += old_lines[0]
